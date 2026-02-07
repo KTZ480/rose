@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Rose Day Suchi</title>
+    <style>
+        /* পুরো স্ক্রিন সেটআপ */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* ব্যাকগ্রাউন্ড এনিমেশন লেয়ার */
+        .canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* কন্টেন্ট বক্স */
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 20px;
+            width: 90%;
+        }
+
+        /* আপনার দেওয়া গোলাপের ছবির স্টাইল */
+        .rose-img {
+            width: 250px; /* মোবাইল স্ক্রিনের জন্য আদর্শ সাইজ */
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.6));
+            animation: heartBeat 2s ease-in-out infinite;
+        }
+
+        /* হৃদস্পন্দনের মতো এনিমেশন */
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* প্রধান টেক্সট */
+        .main-text {
+            color: #ff385c;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-top: 30px;
+            text-shadow: 0 0 10px rgba(255, 56, 92, 0.5);
+        }
+
+        /* ছোট টেক্সট */
+        .sub-text {
+            color: #ffccd5;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            font-style: italic;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="fireworks" class="canvas-container"></canvas>
+
+    <div class="container">
+        <img src="rose-heart.jpeg" alt="Heart Rose" class="rose-img">
+        
+        <div class="main-text">Happy Rose Day Suchi</div>
+        <div class="sub-text">May your life be as beautiful as a rose.</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let particles = [];
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 10,
+                    y: (Math.random() - 0.5) * 10
+                };
+                this.alpha = 1;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.012;
+            }
+        }
+
+        function createFirework() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * (canvas.height * 0.7);
+            const color = `hsl(${Math.random() * 360}, 80%, 60%)`;
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach((p, i) => {
+                if (p.alpha > 0) {
+                    p.update();
+                    p.draw();
+                } else {
+                    particles.splice(i, 1);
+                }
+            });
+
+            if (Math.random() < 0.04) createFirework();
+        }
+        animate();
+    </script>
+</body>
+</html>
